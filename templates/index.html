@@ -20,7 +20,7 @@
     <!-- BUSCADOR -->
     <div class="search-container">
         <div class="search-box">
-            <input type="text" id="buscador" placeholder="🔍 Buscar en el catecismo..." autocomplete="off">
+            <input type="text" id="buscador" placeholder="🔍 Buscar por número (1-129) o palabra..." autocomplete="off">
         </div>
     </div>
 
@@ -221,10 +221,26 @@
         // ========== BUSCADOR ==========
         document.getElementById("buscador").addEventListener("input", async function() {
             const termino = this.value.trim();
+            if (termino.length === 0) {
+                renderizarLista(todasLasPreguntas);
+                return;
+            }
+
+            // Si escribe un número, ir directo a esa pregunta
+            const numero = parseInt(termino);
+            if (!isNaN(numero) && numero >= 1 && numero <= 129) {
+                const filtradas = todasLasPreguntas.filter(p =>
+                    p.id.toString().startsWith(termino)
+                );
+                renderizarLista(filtradas);
+                return;
+            }
+
             if (termino.length < 2) {
                 renderizarLista(todasLasPreguntas);
                 return;
             }
+
             try {
                 const res = await fetch(`/api/buscar?q=${encodeURIComponent(termino)}`);
                 const resultados = await res.json();
