@@ -691,5 +691,9 @@ def crear_base_de_datos():
     from actualizar_referencias import actualizar_referencias
     actualizar_referencias()
 
+    # Crear tabla de textos bíblicos locales
+    from textos_biblicos import crear_tabla_biblia
+    crear_tabla_biblia()
+
 if __name__ == "__main__":
     crear_base_de_datos()
