@@ -3,7 +3,12 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-DB_PATH = os.path.join(os.path.dirname(__file__), "catecismo.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "catecismo.db")
+
+# Crear la base de datos al iniciar si no existe
+if not os.path.exists(DB_PATH):
+    from crear_db import crear_base_de_datos
+    crear_base_de_datos()
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
