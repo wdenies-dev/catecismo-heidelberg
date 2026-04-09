@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catecismo de Heidelberg</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ENCABEZADO -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-icon">�✚</div>
+            <h1>Catecismo de Heidelberg</h1>
+            <p class="subtitle">Preguntas, Respuestas y Meditaciones</p>
+        </div>
+    </header>
+
+    <!-- BUSCADOR -->
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="buscador" placeholder="🔍 Buscar en el catecismo..." autocomplete="off">
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+        <!-- PANEL LATERAL: Lista de preguntas -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Preguntas</h2>
+                <span class="badge" id="totalPreguntas">129</span>
+            </div>
+            <ul class="question-list" id="listaPreguntas">
+                <!-- Se llena con JavaScript -->
+            </ul>
+        </aside>
+
+        <!-- PANEL PRINCIPAL: Detalle -->
+        <section class="detail-panel" id="detailPanel">
+            <!-- Estado inicial: bienvenida -->
+            <div class="welcome" id="welcome">
+                <div class="welcome-icon">📖</div>
+                <h2>Bienvenido al Catecismo de Heidelberg</h2>
+                <p>Selecciona una pregunta del panel izquierdo para ver su respuesta y meditación.</p>
+                <p class="welcome-hint">El Catecismo de Heidelberg (1563) es uno de los catecismos más influyentes de la Reforma Protestante. Contiene <strong>129 preguntas</strong> organizadas en <strong>52 domingos</strong>, divididas en tres partes:</p>
+                <div class="parts-grid">
+                    <div class="part-card">
+                        <div class="part-number">I</div>
+                        <h3>La Miseria del Hombre</h3>
+                        <p>Domingos 2–4</p>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-number">II</div>
+                        <h3>La Liberación del Hombre</h3>
+                        <p>Domingos 5–31</p>
+                    </div>
+                    <div class="part-card">
+                        <div class="part-number">III</div>
+                        <h3>La Gratitud</h3>
+                        <p>Domingos 32–52</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenido de la pregunta (oculto al inicio) -->
+            <div class="question-detail" id="questionDetail" style="display: none;">
+                <div class="detail-badge">
+                    <span class="badge-domingo" id="badgeDomingo">Domingo 1</span>
+                    <span class="badge-pregunta" id="badgePregunta">Pregunta 1</span>
+                </div>
+
+                <div class="detail-section question-section">
+                    <div class="section-label">
+                        <span class="section-icon">❓</span>
+                        PREGUNTA
+                    </div>
+                    <p class="question-text" id="textoPregunta"></p>
+                </div>
+
+                <div class="detail-section answer-section">
+                    <div class="section-label">
+                        <span class="section-icon">💬</span>
+                        RESPUESTA
+                    </div>
+                    <p class="answer-text" id="textoRespuesta"></p>
+                </div>
+
+                <div class="detail-section meditation-section">
+                    <div class="section-label">
+                        <span class="section-icon">🕊️</span>
+                        MEDITACIÓN
+                    </div>
+                    <p class="meditation-text" id="textoMeditacion"></p>
+                </div>
+
+                <!-- Navegación entre preguntas -->
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="btnAnterior" onclick="navegarPregunta(-1)">
+                        ← Anterior
+                    </button>
+                    <button class="nav-btn" id="btnSiguiente" onclick="navegarPregunta(1)">
+                        Siguiente →
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>Catecismo de Heidelberg (1563) — Para la gloria de Dios</p>
+        <p class="footer-verse">«¿Cuál es tu único consuelo tanto en la vida como en la muerte?» — Pregunta 1</p>
+    </footer>
+
+    <!-- BOTÓN MÓVIL para mostrar/ocultar sidebar -->
+    <button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()">
+        ☰ Preguntas
+    </button>
+
+    <script>
+        let preguntaActual = null;
+        let todasLasPreguntas = [];
+
+        // ========== CARGAR PREGUNTAS ==========
+        async function cargarPreguntas() {
+            try {
+                const res = await fetch("/api/preguntas");
+                todasLasPreguntas = await res.json();
+                renderizarLista(todasLasPreguntas);
+            } catch (error) {
+                console.error("Error cargando preguntas:", error);
+            }
+        }
+
+        function renderizarLista(preguntas) {
+            const lista = document.getElementById("listaPreguntas");
+            document.getElementById("totalPreguntas").textContent = preguntas.length;
+
+            let domingoActual = 0;
+            let html = "";
+
+            preguntas.forEach(p => {
+                if (p.domingo !== domingoActual) {
+                    domingoActual = p.domingo;
+                    html += `<li class="domingo-header">Domingo ${domingoActual}</li>`;
+                }
+                const activa = preguntaActual === p.id ? "active" : "";
+                html += `
+                    <li class="question-item ${activa}" data-id="${p.id}" onclick="seleccionarPregunta(${p.id})">
+                        <span class="q-number">${p.id}</span>
+                        <span class="q-text">${p.pregunta.substring(0, 80)}${p.pregunta.length > 80 ? '...' : ''}</span>
+                    </li>
+                `;
+            });
+
+            lista.innerHTML = html;
+        }
+
+        // ========== SELECCIONAR PREGUNTA ==========
+        async function seleccionarPregunta(id) {
+            try {
+                const res = await fetch(`/api/pregunta/${id}`);
+                const data = await res.json();
+
+                preguntaActual = data.id;
+
+                // Mostrar detalle, ocultar bienvenida
+                document.getElementById("welcome").style.display = "none";
+                document.getElementById("questionDetail").style.display = "block";
+
+                // Llenar contenido
+                document.getElementById("badgeDomingo").textContent = `Domingo ${data.domingo}`;
+                document.getElementById("badgePregunta").textContent = `Pregunta ${data.id}`;
+                document.getElementById("textoPregunta").textContent = data.pregunta;
+                document.getElementById("textoRespuesta").textContent = data.respuesta;
+                document.getElementById("textoMeditacion").textContent = data.meditacion;
+
+                // Botones de navegación
+                document.getElementById("btnAnterior").disabled = data.id <= 1;
+                document.getElementById("btnSiguiente").disabled = data.id >= 129;
+
+                // Marcar activa en la lista
+                document.querySelectorAll(".question-item").forEach(el => {
+                    el.classList.toggle("active", parseInt(el.dataset.id) === id);
+                });
+
+                // Scroll al elemento activo en sidebar
+                const activeItem = document.querySelector(".question-item.active");
+                if (activeItem) {
+                    activeItem.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+
+                // En móvil, cerrar sidebar
+                document.getElementById("sidebar").classList.remove("open");
+
+                // Scroll arriba en el detalle
+                document.getElementById("detailPanel").scrollTop = 0;
+
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        // ========== NAVEGACIÓN ==========
+        function navegarPregunta(direccion) {
+            const nuevoId = preguntaActual + direccion;
+            if (nuevoId >= 1 && nuevoId <= 129) {
+                seleccionarPregunta(nuevoId);
+            }
+        }
+
+        // ========== BUSCADOR ==========
+        document.getElementById("buscador").addEventListener("input", async function() {
+            const termino = this.value.trim();
+            if (termino.length < 2) {
+                renderizarLista(todasLasPreguntas);
+                return;
+            }
+            try {
+                const res = await fetch(`/api/buscar?q=${encodeURIComponent(termino)}`);
+                const resultados = await res.json();
+                renderizarLista(resultados);
+            } catch (error) {
+                console.error("Error buscando:", error);
+            }
+        });
+
+        // ========== SIDEBAR MÓVIL ==========
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("open");
+        }
+
+        // ========== TECLADO ==========
+        document.addEventListener("keydown", function(e) {
+            if (e.target.tagName === "INPUT") return;
+            if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                e.preventDefault();
+                navegarPregunta(-1);
+            } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                e.preventDefault();
+                navegarPregunta(1);
+            }
+        });
+
+        // ========== INICIAR ==========
+        cargarPreguntas();
+    </script>
+</body>
+</html>
