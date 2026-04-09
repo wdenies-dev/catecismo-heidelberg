@@ -66,6 +66,9 @@
 
             <!-- Contenido de la pregunta (oculto al inicio) -->
             <div class="question-detail" id="questionDetail" style="display: none;">
+                <button class="mobile-back" id="btnVolver" onclick="volverAPreguntas()">
+                    ← Volver a las preguntas
+                </button>
                 <div class="detail-badge">
                     <span class="badge-domingo" id="badgeDomingo">Domingo 1</span>
                     <span class="badge-pregunta" id="badgePregunta">Pregunta 1</span>
@@ -192,11 +195,15 @@
                     activeItem.scrollIntoView({ behavior: "smooth", block: "center" });
                 }
 
-                // En móvil, cerrar sidebar
-                document.getElementById("sidebar").classList.remove("open");
+                // En móvil, ocultar sidebar y mostrar detalle
+                if (window.innerWidth <= 900) {
+                    document.getElementById("sidebar").classList.add("mobile-hidden");
+                    document.getElementById("detailPanel").style.display = "block";
+                }
 
                 // Scroll arriba en el detalle
                 document.getElementById("detailPanel").scrollTop = 0;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
 
             } catch (error) {
                 console.error("Error:", error);
@@ -227,9 +234,14 @@
             }
         });
 
-        // ========== SIDEBAR MÓVIL ==========
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("open");
+        // ========== MÓVIL: VOLVER A PREGUNTAS ==========
+        function volverAPreguntas() {
+            document.getElementById("sidebar").classList.remove("mobile-hidden");
+            if (window.innerWidth <= 900) {
+                document.getElementById("questionDetail").style.display = "none";
+                document.getElementById("welcome").style.display = "none";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // ========== TECLADO ==========

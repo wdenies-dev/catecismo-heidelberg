@@ -446,25 +446,10 @@ body {
 /* ========== BOTÓN MÓVIL ========== */
 .mobile-toggle {
     display: none;
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 0.9rem 1.5rem;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: 'Open Sans', sans-serif;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    z-index: 1000;
-    transition: background 0.2s;
 }
 
-.mobile-toggle:hover {
-    background: var(--accent);
+.mobile-back {
+    display: none;
 }
 
 /* ========== SCROLLBAR PERSONALIZADO ========== */
@@ -500,24 +485,48 @@ body {
     }
 
     .sidebar {
-        position: fixed;
-        top: 0;
-        left: -100%;
-        width: 85%;
+        width: 100%;
         min-width: unset;
-        max-width: 400px;
-        height: 100vh;
-        z-index: 999;
-        transition: left 0.3s ease;
-        box-shadow: 5px 0 25px rgba(0,0,0,0.3);
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
     }
 
-    .sidebar.open {
-        left: 0;
+    /* Cuando se ve el detalle, ocultar sidebar en móvil */
+    .sidebar.mobile-hidden {
+        display: none;
+    }
+
+    .question-list {
+        max-height: 60vh;
+        overflow-y: auto;
     }
 
     .detail-panel {
         padding: 1.5rem 1rem;
+    }
+
+    /* Botón para volver a las preguntas */
+    .mobile-back {
+        display: flex !important;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.7rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        font-family: 'Open Sans', sans-serif;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .mobile-back:hover {
+        background: var(--accent);
     }
 
     .parts-grid {
@@ -526,7 +535,11 @@ body {
     }
 
     .mobile-toggle {
-        display: block;
+        display: none;
+    }
+
+    .welcome {
+        margin: 1rem auto;
     }
 
     .question-text {
@@ -540,15 +553,31 @@ body {
 
 @media (max-width: 480px) {
     .header {
-        padding: 1.5rem 1rem;
+        padding: 1.2rem 1rem;
+    }
+
+    .header-icon {
+        font-size: 2rem;
     }
 
     .header h1 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
+    }
+
+    .subtitle {
+        font-size: 0.85rem;
     }
 
     .detail-section {
         padding: 1.2rem;
+    }
+
+    .question-text {
+        font-size: 1rem;
+    }
+
+    .answer-text {
+        font-size: 0.95rem;
     }
 }
 
