@@ -302,10 +302,57 @@ body {
 }
 
 /* Detalle de pregunta */
+.detail-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
 .detail-badge {
     display: flex;
     gap: 0.8rem;
-    margin-bottom: 1.5rem;
+}
+
+/* Botón Escuchar */
+.listen-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+}
+
+.listen-btn:hover {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.4);
+}
+
+.listen-btn.playing {
+    background: linear-gradient(135deg, #c62828 0%, #d32f2f 100%);
+    box-shadow: 0 2px 8px rgba(198, 40, 40, 0.3);
+    animation: pulse 1.5s infinite;
+}
+
+.listen-btn.playing:hover {
+    background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%);
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 2px 8px rgba(198, 40, 40, 0.3); }
+    50% { box-shadow: 0 2px 16px rgba(198, 40, 40, 0.6); }
 }
 
 .badge-domingo {

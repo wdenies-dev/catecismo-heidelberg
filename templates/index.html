@@ -69,9 +69,15 @@
                 <button class="mobile-back" id="btnVolver" onclick="volverAPreguntas()">
                     ← Volver a las preguntas
                 </button>
-                <div class="detail-badge">
-                    <span class="badge-domingo" id="badgeDomingo">Domingo 1</span>
-                    <span class="badge-pregunta" id="badgePregunta">Pregunta 1</span>
+                <div class="detail-top-bar">
+                    <div class="detail-badge">
+                        <span class="badge-domingo" id="badgeDomingo">Domingo 1</span>
+                        <span class="badge-pregunta" id="badgePregunta">Pregunta 1</span>
+                    </div>
+                    <button class="listen-btn" id="btnEscuchar" onclick="toggleAudio()">
+                        <span id="listenIcon">🔊</span>
+                        <span id="listenText">Escuchar</span>
+                    </button>
                 </div>
 
                 <div class="detail-section question-section">
@@ -188,6 +194,9 @@
 
                 preguntaActual = data.id;
 
+                // Detener audio si estaba reproduciéndose
+                detenerAudio();
+
                 // Mostrar detalle, ocultar bienvenida
                 document.getElementById("welcome").style.display = "none";
                 document.getElementById("questionDetail").style.display = "block";
@@ -281,6 +290,92 @@
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        // ========== AUDIO (ESCUCHAR) ==========
+        let audioActivo = false;
+
+        function toggleAudio() {
+            if (audioActivo) {
+                detenerAudio();
+            } else {
+                reproducirAudio();
+            }
+        }
+
+        function reproducirAudio() {
+            window.speechSynthesis.cancel();
+
+            const pregunta = document.getElementById("textoPregunta").textContent;
+            const respuesta = document.getElementById("textoRespuesta").textContent;
+            const meditacion = document.getElementById("textoMeditacion").textContent;
+
+            const textoCompleto = `Pregunta: ${pregunta}. Respuesta: ${respuesta}. Meditación: ${meditacion}`;
+
+            // Dividir en partes para evitar el límite de caracteres de speechSynthesis
+            const partes = [];
+            const oraciones = textoCompleto.match(/[^.!?]+[.!?]+/g) || [textoCompleto];
+            let bloque = "";
+
+            oraciones.forEach(oracion => {
+                if ((bloque + oracion).length > 200) {
+                    if (bloque) partes.push(bloque.trim());
+                    bloque = oracion;
+                } else {
+                    bloque += oracion;
+                }
+            });
+            if (bloque) partes.push(bloque.trim());
+
+            audioActivo = true;
+            document.getElementById("listenIcon").textContent = "⏹️";
+            document.getElementById("listenText").textContent = "Detener";
+            document.getElementById("btnEscuchar").classList.add("playing");
+
+            let indice = 0;
+
+            function hablarSiguiente() {
+                if (indice >= partes.length || !audioActivo) {
+                    detenerAudio();
+                    return;
+                }
+
+                const utterance = new SpeechSynthesisUtterance(partes[indice]);
+                utterance.lang = "es-ES";
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+
+                // Buscar voz en español
+                const voces = window.speechSynthesis.getVoices();
+                const vozEs = voces.find(v => v.lang.startsWith("es")) || null;
+                if (vozEs) utterance.voice = vozEs;
+
+                utterance.onend = function() {
+                    indice++;
+                    hablarSiguiente();
+                };
+
+                utterance.onerror = function() {
+                    detenerAudio();
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            hablarSiguiente();
+        }
+
+        function detenerAudio() {
+            window.speechSynthesis.cancel();
+            audioActivo = false;
+            document.getElementById("listenIcon").textContent = "🔊";
+            document.getElementById("listenText").textContent = "Escuchar";
+            document.getElementById("btnEscuchar").classList.remove("playing");
+        }
+
+        // Cargar voces (necesario en algunos navegadores)
+        window.speechSynthesis.onvoiceschanged = function() {
+            window.speechSynthesis.getVoices();
+        };
 
         // ========== REFERENCIAS BÍBLICAS ==========
         function mostrarReferencias(refString) {
