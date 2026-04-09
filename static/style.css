@@ -59,6 +59,40 @@ body {
     z-index: 1;
 }
 
+/* ========== LANGUAGE SWITCHER ========== */
+.lang-switcher {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.3rem;
+    z-index: 2;
+}
+
+.lang-btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.lang-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+}
+
+.lang-btn.active {
+    background: var(--gold);
+    color: var(--primary);
+    border-color: var(--gold);
+}
+
 .header-icon {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;

@@ -11,7 +11,8 @@ def crear_tabla_biblia():
     cursor.execute("""
         CREATE TABLE biblia (
             referencia TEXT PRIMARY KEY,
-            texto TEXT NOT NULL
+            texto TEXT NOT NULL,
+            texto_en TEXT NOT NULL DEFAULT ''
         )
     """)
 

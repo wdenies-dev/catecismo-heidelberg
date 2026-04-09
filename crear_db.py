@@ -15,7 +15,10 @@ def crear_base_de_datos():
             pregunta TEXT NOT NULL,
             respuesta TEXT NOT NULL,
             meditacion TEXT NOT NULL,
-            referencias TEXT NOT NULL DEFAULT ''
+            referencias TEXT NOT NULL DEFAULT '',
+            pregunta_en TEXT NOT NULL DEFAULT '',
+            respuesta_en TEXT NOT NULL DEFAULT '',
+            meditacion_en TEXT NOT NULL DEFAULT ''
         )
     """)
 
@@ -694,6 +697,10 @@ def crear_base_de_datos():
     # Crear tabla de textos bíblicos locales
     from textos_biblicos import crear_tabla_biblia
     crear_tabla_biblia()
+
+    # Agregar datos en inglés
+    from datos_ingles import actualizar_ingles
+    actualizar_ingles()
 
 if __name__ == "__main__":
     crear_base_de_datos()

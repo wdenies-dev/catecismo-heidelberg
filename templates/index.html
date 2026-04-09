@@ -11,16 +11,20 @@
     <!-- ENCABEZADO -->
     <header class="header">
         <div class="header-content">
-            <div class="header-icon">�✚</div>
-            <h1>Catecismo de Heidelberg</h1>
-            <p class="subtitle">Preguntas, Respuestas y Meditaciones</p>
+            <div class="lang-switcher">
+                <button class="lang-btn active" id="btnES" onclick="cambiarIdioma('es')">ES</button>
+                <button class="lang-btn" id="btnEN" onclick="cambiarIdioma('en')">EN</button>
+            </div>
+            <div class="header-icon">&#10014;</div>
+            <h1 id="headerTitle">Catecismo de Heidelberg</h1>
+            <p class="subtitle" id="headerSubtitle">Preguntas, Respuestas y Meditaciones</p>
         </div>
     </header>
 
     <!-- BUSCADOR -->
     <div class="search-container">
         <div class="search-box">
-            <input type="text" id="buscador" placeholder="🔍 Buscar por número (1-129) o palabra..." autocomplete="off">
+            <input type="text" id="buscador" placeholder="Buscar por numero (1-129) o palabra..." autocomplete="off">
         </div>
     </div>
 
@@ -29,7 +33,7 @@
         <!-- PANEL LATERAL: Lista de preguntas -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2>Preguntas</h2>
+                <h2 id="sidebarTitle">Preguntas</h2>
                 <span class="badge" id="totalPreguntas">129</span>
             </div>
             <ul class="question-list" id="listaPreguntas">
@@ -41,25 +45,25 @@
         <section class="detail-panel" id="detailPanel">
             <!-- Estado inicial: bienvenida -->
             <div class="welcome" id="welcome">
-                <div class="welcome-icon">📖</div>
-                <h2>Bienvenido al Catecismo de Heidelberg</h2>
-                <p>Selecciona una pregunta del panel izquierdo para ver su respuesta y meditación.</p>
-                <p class="welcome-hint">El Catecismo de Heidelberg (1563) es uno de los catecismos más influyentes de la Reforma Protestante. Contiene <strong>129 preguntas</strong> organizadas en <strong>52 domingos</strong>, divididas en tres partes:</p>
+                <div class="welcome-icon">&#128214;</div>
+                <h2 id="welcomeTitle">Bienvenido al Catecismo de Heidelberg</h2>
+                <p id="welcomeText">Selecciona una pregunta del panel izquierdo para ver su respuesta y meditacion.</p>
+                <p class="welcome-hint" id="welcomeHint">El Catecismo de Heidelberg (1563) es uno de los catecismos mas influyentes de la Reforma Protestante. Contiene <strong>129 preguntas</strong> organizadas en <strong>52 domingos</strong>, divididas en tres partes:</p>
                 <div class="parts-grid">
                     <div class="part-card">
                         <div class="part-number">I</div>
-                        <h3>La Miseria del Hombre</h3>
-                        <p>Domingos 2–4</p>
+                        <h3 id="part1Title">La Miseria del Hombre</h3>
+                        <p id="part1Desc">Domingos 2-4</p>
                     </div>
                     <div class="part-card">
                         <div class="part-number">II</div>
-                        <h3>La Liberación del Hombre</h3>
-                        <p>Domingos 5–31</p>
+                        <h3 id="part2Title">La Liberacion del Hombre</h3>
+                        <p id="part2Desc">Domingos 5-31</p>
                     </div>
                     <div class="part-card">
                         <div class="part-number">III</div>
-                        <h3>La Gratitud</h3>
-                        <p>Domingos 32–52</p>
+                        <h3 id="part3Title">La Gratitud</h3>
+                        <p id="part3Desc">Domingos 32-52</p>
                     </div>
                 </div>
             </div>
@@ -67,7 +71,7 @@
             <!-- Contenido de la pregunta (oculto al inicio) -->
             <div class="question-detail" id="questionDetail" style="display: none;">
                 <button class="mobile-back" id="btnVolver" onclick="volverAPreguntas()">
-                    ← Volver a las preguntas
+                    <span id="volverText">&#8592; Volver a las preguntas</span>
                 </button>
                 <div class="detail-top-bar">
                     <div class="detail-badge">
@@ -75,31 +79,31 @@
                         <span class="badge-pregunta" id="badgePregunta">Pregunta 1</span>
                     </div>
                     <button class="listen-btn" id="btnEscuchar" onclick="toggleAudio()">
-                        <span id="listenIcon">🔊</span>
+                        <span id="listenIcon">&#128266;</span>
                         <span id="listenText">Escuchar</span>
                     </button>
                 </div>
 
                 <div class="detail-section question-section">
-                    <div class="section-label">
-                        <span class="section-icon">❓</span>
+                    <div class="section-label" id="labelPregunta">
+                        <span class="section-icon">&#10067;</span>
                         PREGUNTA
                     </div>
                     <p class="question-text" id="textoPregunta"></p>
                 </div>
 
                 <div class="detail-section answer-section">
-                    <div class="section-label">
-                        <span class="section-icon">💬</span>
+                    <div class="section-label" id="labelRespuesta">
+                        <span class="section-icon">&#128172;</span>
                         RESPUESTA
                     </div>
                     <p class="answer-text" id="textoRespuesta"></p>
                 </div>
 
                 <div class="detail-section references-section">
-                    <div class="section-label">
-                        <span class="section-icon">📜</span>
-                        REFERENCIAS BÍBLICAS
+                    <div class="section-label" id="labelReferencias">
+                        <span class="section-icon">&#128220;</span>
+                        REFERENCIAS BIBLICAS
                     </div>
                     <div class="references-list" id="listaReferencias">
                         <!-- Se llena con JavaScript -->
@@ -107,20 +111,20 @@
                 </div>
 
                 <div class="detail-section meditation-section">
-                    <div class="section-label">
-                        <span class="section-icon">🕊️</span>
-                        MEDITACIÓN
+                    <div class="section-label" id="labelMeditacion">
+                        <span class="section-icon">&#128330;&#65039;</span>
+                        MEDITACION
                     </div>
                     <p class="meditation-text" id="textoMeditacion"></p>
                 </div>
 
-                <!-- Navegación entre preguntas -->
+                <!-- Navegacion entre preguntas -->
                 <div class="nav-buttons">
                     <button class="nav-btn" id="btnAnterior" onclick="navegarPregunta(-1)">
-                        ← Anterior
+                        <span id="anteriorText">&#8592; Anterior</span>
                     </button>
                     <button class="nav-btn" id="btnSiguiente" onclick="navegarPregunta(1)">
-                        Siguiente →
+                        <span id="siguienteText">Siguiente &#8594;</span>
                     </button>
                 </div>
             </div>
@@ -129,19 +133,19 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-        <p>Catecismo de Heidelberg (1563) — Para la gloria de Dios</p>
-        <p class="footer-verse">«¿Cuál es tu único consuelo tanto en la vida como en la muerte?» — Pregunta 1</p>
+        <p id="footerText">Catecismo de Heidelberg (1563) &#8212; Para la gloria de Dios</p>
+        <p class="footer-verse" id="footerVerse">&#171;&#191;Cual es tu unico consuelo tanto en la vida como en la muerte?&#187; &#8212; Pregunta 1</p>
     </footer>
 
-    <!-- MODAL PARA TEXTO BÍBLICO -->
+    <!-- MODAL PARA TEXTO BIBLICO -->
     <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h3 id="modalTitulo">Referencia Bíblica</h3>
+                <h3 id="modalTitulo">Referencia Biblica</h3>
                 <button class="modal-close" onclick="cerrarModal()">&times;</button>
             </div>
             <div class="modal-body" id="modalBody">
-                <div class="modal-loading" id="modalLoading">Cargando texto bíblico...</div>
+                <div class="modal-loading" id="modalLoading">Cargando texto biblico...</div>
                 <p class="modal-text" id="modalTexto"></p>
             </div>
         </div>
@@ -150,11 +154,133 @@
     <script>
         let preguntaActual = null;
         let todasLasPreguntas = [];
+        let idiomaActual = 'es';
+
+        // ========== TRADUCCIONES ==========
+        const traducciones = {
+            es: {
+                title: "Catecismo de Heidelberg",
+                subtitle: "Preguntas, Respuestas y Meditaciones",
+                searchPlaceholder: "Buscar por numero (1-129) o palabra...",
+                sidebarTitle: "Preguntas",
+                welcomeTitle: "Bienvenido al Catecismo de Heidelberg",
+                welcomeText: "Selecciona una pregunta del panel izquierdo para ver su respuesta y meditacion.",
+                welcomeHint: 'El Catecismo de Heidelberg (1563) es uno de los catecismos mas influyentes de la Reforma Protestante. Contiene <strong>129 preguntas</strong> organizadas en <strong>52 domingos</strong>, divididas en tres partes:',
+                part1: "La Miseria del Hombre",
+                part1Desc: "Domingos 2-4",
+                part2: "La Liberacion del Hombre",
+                part2Desc: "Domingos 5-31",
+                part3: "La Gratitud",
+                part3Desc: "Domingos 32-52",
+                domingo: "Domingo",
+                pregunta: "Pregunta",
+                labelPregunta: "PREGUNTA",
+                labelRespuesta: "RESPUESTA",
+                labelReferencias: "REFERENCIAS BIBLICAS",
+                labelMeditacion: "MEDITACION",
+                escuchar: "Escuchar",
+                detener: "Detener",
+                anterior: "\u2190 Anterior",
+                siguiente: "Siguiente \u2192",
+                volver: "\u2190 Volver a las preguntas",
+                footer: "Catecismo de Heidelberg (1563) \u2014 Para la gloria de Dios",
+                footerVerse: '\u00ab\u00bfCual es tu unico consuelo tanto en la vida como en la muerte?\u00bb \u2014 Pregunta 1',
+                modalTitulo: "Referencia Biblica",
+                modalLoading: "Cargando texto biblico...",
+                modalErrorConexion: "Error de conexion. Busca {ref} en tu Biblia.",
+                modalErrorNoTexto: "No se pudo cargar el texto de {ref}. Puedes buscarlo en tu Biblia.",
+                speechLang: "es-ES"
+            },
+            en: {
+                title: "Heidelberg Catechism",
+                subtitle: "Questions, Answers and Meditations",
+                searchPlaceholder: "Search by number (1-129) or word...",
+                sidebarTitle: "Questions",
+                welcomeTitle: "Welcome to the Heidelberg Catechism",
+                welcomeText: "Select a question from the left panel to see its answer and meditation.",
+                welcomeHint: 'The Heidelberg Catechism (1563) is one of the most influential catechisms of the Protestant Reformation. It contains <strong>129 questions</strong> organized in <strong>52 Sundays</strong>, divided into three parts:',
+                part1: "The Misery of Man",
+                part1Desc: "Sundays 2-4",
+                part2: "The Deliverance of Man",
+                part2Desc: "Sundays 5-31",
+                part3: "Gratitude",
+                part3Desc: "Sundays 32-52",
+                domingo: "Sunday",
+                pregunta: "Question",
+                labelPregunta: "QUESTION",
+                labelRespuesta: "ANSWER",
+                labelReferencias: "BIBLICAL REFERENCES",
+                labelMeditacion: "MEDITATION",
+                escuchar: "Listen",
+                detener: "Stop",
+                anterior: "\u2190 Previous",
+                siguiente: "Next \u2192",
+                volver: "\u2190 Back to questions",
+                footer: "Heidelberg Catechism (1563) \u2014 To God be the glory",
+                footerVerse: '\u00abWhat is your only comfort in life and in death?\u00bb \u2014 Question 1',
+                modalTitulo: "Biblical Reference",
+                modalLoading: "Loading biblical text...",
+                modalErrorConexion: "Connection error. Look up {ref} in your Bible.",
+                modalErrorNoTexto: "Could not load the text for {ref}. You can look it up in your Bible.",
+                speechLang: "en-US"
+            }
+        };
+
+        function t(key) {
+            return traducciones[idiomaActual][key] || key;
+        }
+
+        // ========== CAMBIAR IDIOMA ==========
+        function cambiarIdioma(lang) {
+            if (lang === idiomaActual) return;
+            idiomaActual = lang;
+
+            // Actualizar botones
+            document.getElementById("btnES").classList.toggle("active", lang === "es");
+            document.getElementById("btnEN").classList.toggle("active", lang === "en");
+
+            // Actualizar todos los textos de la interfaz
+            document.getElementById("headerTitle").textContent = t("title");
+            document.getElementById("headerSubtitle").textContent = t("subtitle");
+            document.getElementById("buscador").placeholder = t("searchPlaceholder");
+            document.getElementById("sidebarTitle").textContent = t("sidebarTitle");
+            document.getElementById("welcomeTitle").textContent = t("welcomeTitle");
+            document.getElementById("welcomeText").textContent = t("welcomeText");
+            document.getElementById("welcomeHint").innerHTML = t("welcomeHint");
+            document.getElementById("part1Title").textContent = t("part1");
+            document.getElementById("part1Desc").textContent = t("part1Desc");
+            document.getElementById("part2Title").textContent = t("part2");
+            document.getElementById("part2Desc").textContent = t("part2Desc");
+            document.getElementById("part3Title").textContent = t("part3");
+            document.getElementById("part3Desc").textContent = t("part3Desc");
+            document.getElementById("footerText").textContent = t("footer");
+            document.getElementById("footerVerse").textContent = t("footerVerse");
+            document.getElementById("volverText").innerHTML = t("volver");
+            document.getElementById("anteriorText").innerHTML = t("anterior");
+            document.getElementById("siguienteText").innerHTML = t("siguiente");
+            document.getElementById("labelPregunta").innerHTML = '<span class="section-icon">&#10067;</span> ' + t("labelPregunta");
+            document.getElementById("labelRespuesta").innerHTML = '<span class="section-icon">&#128172;</span> ' + t("labelRespuesta");
+            document.getElementById("labelReferencias").innerHTML = '<span class="section-icon">&#128220;</span> ' + t("labelReferencias");
+            document.getElementById("labelMeditacion").innerHTML = '<span class="section-icon">&#128330;&#65039;</span> ' + t("labelMeditacion");
+
+            if (!audioActivo) {
+                document.getElementById("listenText").textContent = t("escuchar");
+            }
+
+            // Recargar datos en el nuevo idioma
+            cargarPreguntas();
+            if (preguntaActual) {
+                seleccionarPregunta(preguntaActual);
+            }
+
+            // Cambiar lang del HTML
+            document.documentElement.lang = lang === "en" ? "en" : "es";
+        }
 
         // ========== CARGAR PREGUNTAS ==========
         async function cargarPreguntas() {
             try {
-                const res = await fetch("/api/preguntas");
+                const res = await fetch(`/api/preguntas?lang=${idiomaActual}`);
                 todasLasPreguntas = await res.json();
                 renderizarLista(todasLasPreguntas);
             } catch (error) {
@@ -172,7 +298,7 @@
             preguntas.forEach(p => {
                 if (p.domingo !== domingoActual) {
                     domingoActual = p.domingo;
-                    html += `<li class="domingo-header">Domingo ${domingoActual}</li>`;
+                    html += `<li class="domingo-header">${t("domingo")} ${domingoActual}</li>`;
                 }
                 const activa = preguntaActual === p.id ? "active" : "";
                 html += `
@@ -189,12 +315,12 @@
         // ========== SELECCIONAR PREGUNTA ==========
         async function seleccionarPregunta(id) {
             try {
-                const res = await fetch(`/api/pregunta/${id}`);
+                const res = await fetch(`/api/pregunta/${id}?lang=${idiomaActual}`);
                 const data = await res.json();
 
                 preguntaActual = data.id;
 
-                // Detener audio si estaba reproduciéndose
+                // Detener audio si estaba reproduciendose
                 detenerAudio();
 
                 // Mostrar detalle, ocultar bienvenida
@@ -202,16 +328,16 @@
                 document.getElementById("questionDetail").style.display = "block";
 
                 // Llenar contenido
-                document.getElementById("badgeDomingo").textContent = `Domingo ${data.domingo}`;
-                document.getElementById("badgePregunta").textContent = `Pregunta ${data.id}`;
+                document.getElementById("badgeDomingo").textContent = `${t("domingo")} ${data.domingo}`;
+                document.getElementById("badgePregunta").textContent = `${t("pregunta")} ${data.id}`;
                 document.getElementById("textoPregunta").textContent = data.pregunta;
                 document.getElementById("textoRespuesta").textContent = data.respuesta;
                 document.getElementById("textoMeditacion").textContent = data.meditacion;
 
-                // Mostrar referencias bíblicas
+                // Mostrar referencias biblicas
                 mostrarReferencias(data.referencias || "");
 
-                // Botones de navegación
+                // Botones de navegacion
                 document.getElementById("btnAnterior").disabled = data.id <= 1;
                 document.getElementById("btnSiguiente").disabled = data.id >= 129;
 
@@ -226,7 +352,7 @@
                     activeItem.scrollIntoView({ behavior: "smooth", block: "center" });
                 }
 
-                // En móvil, ocultar sidebar y mostrar detalle
+                // En movil, ocultar sidebar y mostrar detalle
                 if (window.innerWidth <= 900) {
                     document.getElementById("sidebar").classList.add("mobile-hidden");
                     document.getElementById("detailPanel").style.display = "block";
@@ -241,7 +367,7 @@
             }
         }
 
-        // ========== NAVEGACIÓN ==========
+        // ========== NAVEGACION ==========
         function navegarPregunta(direccion) {
             const nuevoId = preguntaActual + direccion;
             if (nuevoId >= 1 && nuevoId <= 129) {
@@ -260,7 +386,7 @@
                 return;
             }
 
-            // Si es un número válido (1-129), abrir esa pregunta de inmediato
+            // Si es un numero valido (1-129), abrir esa pregunta de inmediato
             if (/^\d+$/.test(termino)) {
                 const numero = parseInt(termino);
                 if (numero >= 1 && numero <= 129) {
@@ -272,7 +398,7 @@
             // Si es texto, buscar por palabra
             if (termino.length >= 2) {
                 try {
-                    const res = await fetch(`/api/buscar?q=${encodeURIComponent(termino)}`);
+                    const res = await fetch(`/api/buscar?q=${encodeURIComponent(termino)}&lang=${idiomaActual}`);
                     const resultados = await res.json();
                     renderizarLista(resultados);
                 } catch (error) {
@@ -281,7 +407,7 @@
             }
         });
 
-        // ========== MÓVIL: VOLVER A PREGUNTAS ==========
+        // ========== MOVIL: VOLVER A PREGUNTAS ==========
         function volverAPreguntas() {
             document.getElementById("sidebar").classList.remove("mobile-hidden");
             if (window.innerWidth <= 900) {
@@ -309,9 +435,13 @@
             const respuesta = document.getElementById("textoRespuesta").textContent;
             const meditacion = document.getElementById("textoMeditacion").textContent;
 
-            const textoCompleto = `Pregunta: ${pregunta}. Respuesta: ${respuesta}. Meditación: ${meditacion}`;
+            const labelQ = idiomaActual === "en" ? "Question" : "Pregunta";
+            const labelA = idiomaActual === "en" ? "Answer" : "Respuesta";
+            const labelM = idiomaActual === "en" ? "Meditation" : "Meditacion";
 
-            // Dividir en partes para evitar el límite de caracteres de speechSynthesis
+            const textoCompleto = `${labelQ}: ${pregunta}. ${labelA}: ${respuesta}. ${labelM}: ${meditacion}`;
+
+            // Dividir en partes para evitar el limite de caracteres de speechSynthesis
             const partes = [];
             const oraciones = textoCompleto.match(/[^.!?]+[.!?]+/g) || [textoCompleto];
             let bloque = "";
@@ -327,8 +457,8 @@
             if (bloque) partes.push(bloque.trim());
 
             audioActivo = true;
-            document.getElementById("listenIcon").textContent = "⏹️";
-            document.getElementById("listenText").textContent = "Detener";
+            document.getElementById("listenIcon").textContent = "\u23f9\ufe0f";
+            document.getElementById("listenText").textContent = t("detener");
             document.getElementById("btnEscuchar").classList.add("playing");
 
             let indice = 0;
@@ -340,14 +470,15 @@
                 }
 
                 const utterance = new SpeechSynthesisUtterance(partes[indice]);
-                utterance.lang = "es-ES";
+                utterance.lang = t("speechLang");
                 utterance.rate = 0.9;
                 utterance.pitch = 1;
 
-                // Buscar voz en español
+                // Buscar voz en el idioma correspondiente
                 const voces = window.speechSynthesis.getVoices();
-                const vozEs = voces.find(v => v.lang.startsWith("es")) || null;
-                if (vozEs) utterance.voice = vozEs;
+                const langPrefix = idiomaActual === "en" ? "en" : "es";
+                const voz = voces.find(v => v.lang.startsWith(langPrefix)) || null;
+                if (voz) utterance.voice = voz;
 
                 utterance.onend = function() {
                     indice++;
@@ -367,8 +498,8 @@
         function detenerAudio() {
             window.speechSynthesis.cancel();
             audioActivo = false;
-            document.getElementById("listenIcon").textContent = "🔊";
-            document.getElementById("listenText").textContent = "Escuchar";
+            document.getElementById("listenIcon").textContent = "\ud83d\udd0a";
+            document.getElementById("listenText").textContent = t("escuchar");
             document.getElementById("btnEscuchar").classList.remove("playing");
         }
 
@@ -377,11 +508,12 @@
             window.speechSynthesis.getVoices();
         };
 
-        // ========== REFERENCIAS BÍBLICAS ==========
+        // ========== REFERENCIAS BIBLICAS ==========
         function mostrarReferencias(refString) {
             const container = document.getElementById("listaReferencias");
             if (!refString) {
-                container.innerHTML = "<p style='color: var(--text-muted)'>No hay referencias disponibles.</p>";
+                const msg = idiomaActual === "en" ? "No references available." : "No hay referencias disponibles.";
+                container.innerHTML = `<p style='color: var(--text-muted)'>${msg}</p>`;
                 return;
             }
 
@@ -389,9 +521,11 @@
             let html = "";
             refs.forEach(ref => {
                 const parts = ref.split("|");
-                const nombre = parts[0].trim();
+                const nombreEs = parts[0].trim();
                 const apiRef = parts[1] ? parts[1].trim() : "";
-                html += `<button class="ref-badge" onclick="abrirReferencia('${nombre}', '${apiRef}')">${nombre}</button>`;
+                // En ingles mostrar la referencia en formato ingles (apiRef)
+                const displayName = idiomaActual === "en" ? apiRef : nombreEs;
+                html += `<button class="ref-badge" onclick="abrirReferencia('${displayName}', '${apiRef}')">${displayName}</button>`;
             });
             container.innerHTML = html;
         }
@@ -405,20 +539,21 @@
             titulo.textContent = nombre;
             texto.textContent = "";
             loading.style.display = "block";
+            loading.textContent = t("modalLoading");
             overlay.classList.add("active");
             document.body.style.overflow = "hidden";
 
             try {
-                const res = await fetch(`/api/biblia?ref=${encodeURIComponent(apiRef)}`);
+                const res = await fetch(`/api/biblia?ref=${encodeURIComponent(apiRef)}&lang=${idiomaActual}`);
                 const data = await res.json();
 
                 if (data.texto) {
                     texto.textContent = data.texto;
                 } else {
-                    texto.textContent = `No se pudo cargar el texto de ${nombre}. Puedes buscarlo en tu Biblia.`;
+                    texto.textContent = t("modalErrorNoTexto").replace("{ref}", nombre);
                 }
             } catch (error) {
-                texto.textContent = `Error de conexión. Busca ${nombre} en tu Biblia.`;
+                texto.textContent = t("modalErrorConexion").replace("{ref}", nombre);
             }
 
             loading.style.display = "none";
