@@ -90,6 +90,16 @@
                     <p class="answer-text" id="textoRespuesta"></p>
                 </div>
 
+                <div class="detail-section references-section">
+                    <div class="section-label">
+                        <span class="section-icon">📜</span>
+                        REFERENCIAS BÍBLICAS
+                    </div>
+                    <div class="references-list" id="listaReferencias">
+                        <!-- Se llena con JavaScript -->
+                    </div>
+                </div>
+
                 <div class="detail-section meditation-section">
                     <div class="section-label">
                         <span class="section-icon">🕊️</span>
@@ -117,10 +127,19 @@
         <p class="footer-verse">«¿Cuál es tu único consuelo tanto en la vida como en la muerte?» — Pregunta 1</p>
     </footer>
 
-    <!-- BOTÓN MÓVIL para mostrar/ocultar sidebar -->
-    <button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()">
-        ☰ Preguntas
-    </button>
+    <!-- MODAL PARA TEXTO BÍBLICO -->
+    <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalTitulo">Referencia Bíblica</h3>
+                <button class="modal-close" onclick="cerrarModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="modal-loading" id="modalLoading">Cargando texto bíblico...</div>
+                <p class="modal-text" id="modalTexto"></p>
+            </div>
+        </div>
+    </div>
 
     <script>
         let preguntaActual = null;
@@ -179,6 +198,9 @@
                 document.getElementById("textoPregunta").textContent = data.pregunta;
                 document.getElementById("textoRespuesta").textContent = data.respuesta;
                 document.getElementById("textoMeditacion").textContent = data.meditacion;
+
+                // Mostrar referencias bíblicas
+                mostrarReferencias(data.referencias || "");
 
                 // Botones de navegación
                 document.getElementById("btnAnterior").disabled = data.id <= 1;
@@ -259,6 +281,74 @@
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        // ========== REFERENCIAS BÍBLICAS ==========
+        function mostrarReferencias(refString) {
+            const container = document.getElementById("listaReferencias");
+            if (!refString) {
+                container.innerHTML = "<p style='color: var(--text-muted)'>No hay referencias disponibles.</p>";
+                return;
+            }
+
+            const refs = refString.split(";");
+            let html = "";
+            refs.forEach(ref => {
+                const parts = ref.split("|");
+                const nombre = parts[0].trim();
+                const apiRef = parts[1] ? parts[1].trim() : "";
+                html += `<button class="ref-badge" onclick="abrirReferencia('${nombre}', '${apiRef}')">${nombre}</button>`;
+            });
+            container.innerHTML = html;
+        }
+
+        async function abrirReferencia(nombre, apiRef) {
+            const overlay = document.getElementById("modalOverlay");
+            const titulo = document.getElementById("modalTitulo");
+            const texto = document.getElementById("modalTexto");
+            const loading = document.getElementById("modalLoading");
+
+            titulo.textContent = nombre;
+            texto.textContent = "";
+            loading.style.display = "block";
+            overlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+
+            try {
+                const url = `https://bible-api.com/${encodeURIComponent(apiRef)}?translation=reina-valera-1960`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (data.text) {
+                    texto.textContent = data.text.trim();
+                } else if (data.verses && data.verses.length > 0) {
+                    texto.textContent = data.verses.map(v => v.text).join(" ").trim();
+                } else {
+                    // Intentar con traducción por defecto si RV1960 no está
+                    const res2 = await fetch(`https://bible-api.com/${encodeURIComponent(apiRef)}`);
+                    const data2 = await res2.json();
+                    if (data2.text) {
+                        texto.textContent = data2.text.trim();
+                    } else {
+                        texto.textContent = `No se pudo cargar el texto de ${nombre}. Puedes buscarlo en tu Biblia.`;
+                    }
+                }
+            } catch (error) {
+                texto.textContent = `No se pudo conectar con el servicio bíblico. Busca ${nombre} en tu Biblia.`;
+            }
+
+            loading.style.display = "none";
+        }
+
+        function cerrarModal(event) {
+            if (event && event.target !== document.getElementById("modalOverlay")) return;
+            document.getElementById("modalOverlay").classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        // Cerrar modal con Escape
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape") cerrarModal();
+        });
 
         // ========== TECLADO ==========
         document.addEventListener("keydown", function(e) {
