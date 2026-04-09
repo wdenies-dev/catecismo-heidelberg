@@ -219,16 +219,25 @@
         }
 
         // ========== BUSCADOR ==========
-        document.getElementById("buscador").addEventListener("input", async function() {
+        let buscadorTimeout = null;
+        const buscador = document.getElementById("buscador");
+
+        buscador.addEventListener("input", function() {
+            clearTimeout(buscadorTimeout);
             const termino = this.value.trim();
+
             if (termino.length === 0) {
                 renderizarLista(todasLasPreguntas);
                 return;
             }
 
-            // Si escribe un número, ir directo a esa pregunta
+            // Si es un número exacto entre 1-129, abrir esa pregunta directamente
             const numero = parseInt(termino);
-            if (!isNaN(numero) && numero >= 1 && numero <= 129) {
+            if (/^\d+$/.test(termino) && numero >= 1 && numero <= 129) {
+                buscadorTimeout = setTimeout(() => {
+                    seleccionarPregunta(numero);
+                }, 500);
+                // También filtrar la lista
                 const filtradas = todasLasPreguntas.filter(p =>
                     p.id.toString().startsWith(termino)
                 );
@@ -241,12 +250,26 @@
                 return;
             }
 
-            try {
-                const res = await fetch(`/api/buscar?q=${encodeURIComponent(termino)}`);
-                const resultados = await res.json();
-                renderizarLista(resultados);
-            } catch (error) {
-                console.error("Error buscando:", error);
+            buscadorTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/api/buscar?q=${encodeURIComponent(termino)}`);
+                    const resultados = await res.json();
+                    renderizarLista(resultados);
+                } catch (error) {
+                    console.error("Error buscando:", error);
+                }
+            }, 300);
+        });
+
+        // Al presionar Enter, abrir la pregunta si es número
+        buscador.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                const termino = this.value.trim();
+                const numero = parseInt(termino);
+                if (/^\d+$/.test(termino) && numero >= 1 && numero <= 129) {
+                    seleccionarPregunta(numero);
+                    this.blur();
+                }
             }
         });
 
