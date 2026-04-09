@@ -7,13 +7,15 @@ def crear_base_de_datos():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
+    cursor.execute("DROP TABLE IF EXISTS catecismo")
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS catecismo (
+        CREATE TABLE catecismo (
             id INTEGER PRIMARY KEY,
             domingo INTEGER NOT NULL,
             pregunta TEXT NOT NULL,
             respuesta TEXT NOT NULL,
-            meditacion TEXT NOT NULL
+            meditacion TEXT NOT NULL,
+            referencias TEXT NOT NULL DEFAULT ''
         )
     """)
 
@@ -684,6 +686,10 @@ def crear_base_de_datos():
     conn.commit()
     conn.close()
     print(f"Base de datos creada exitosamente con {len(preguntas)} preguntas en: {DB_PATH}")
+
+    # Agregar referencias bíblicas
+    from actualizar_referencias import actualizar_referencias
+    actualizar_referencias()
 
 if __name__ == "__main__":
     crear_base_de_datos()
