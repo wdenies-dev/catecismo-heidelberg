@@ -409,26 +409,16 @@
             document.body.style.overflow = "hidden";
 
             try {
-                const url = `https://bible-api.com/${encodeURIComponent(apiRef)}?translation=reina-valera-1960`;
-                const res = await fetch(url);
+                const res = await fetch(`/api/biblia?ref=${encodeURIComponent(apiRef)}`);
                 const data = await res.json();
 
-                if (data.text) {
-                    texto.textContent = data.text.trim();
-                } else if (data.verses && data.verses.length > 0) {
-                    texto.textContent = data.verses.map(v => v.text).join(" ").trim();
+                if (data.texto) {
+                    texto.textContent = data.texto;
                 } else {
-                    // Intentar con traducción por defecto si RV1960 no está
-                    const res2 = await fetch(`https://bible-api.com/${encodeURIComponent(apiRef)}`);
-                    const data2 = await res2.json();
-                    if (data2.text) {
-                        texto.textContent = data2.text.trim();
-                    } else {
-                        texto.textContent = `No se pudo cargar el texto de ${nombre}. Puedes buscarlo en tu Biblia.`;
-                    }
+                    texto.textContent = `No se pudo cargar el texto de ${nombre}. Puedes buscarlo en tu Biblia.`;
                 }
             } catch (error) {
-                texto.textContent = `No se pudo conectar con el servicio bíblico. Busca ${nombre} en tu Biblia.`;
+                texto.textContent = `Error de conexión. Busca ${nombre} en tu Biblia.`;
             }
 
             loading.style.display = "none";

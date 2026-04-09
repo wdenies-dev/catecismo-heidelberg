@@ -1,6 +1,9 @@
 from flask import Flask, render_template, jsonify, request
 import sqlite3
 import os
+import urllib.request
+import urllib.parse
+import json
 
 app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "catecismo.db")
@@ -60,6 +63,33 @@ def buscar():
     ).fetchall()
     conn.close()
     return jsonify([dict(p) for p in preguntas])
+
+@app.route("/api/biblia")
+def obtener_texto_biblico():
+    ref = request.args.get("ref", "")
+    if not ref:
+        return jsonify({"error": "Referencia no proporcionada"}), 400
+
+    # Intentar múltiples APIs
+    apis = [
+        f"https://bible-api.com/{urllib.parse.quote(ref)}?translation=reina-valera-1960",
+        f"https://bible-api.com/{urllib.parse.quote(ref)}",
+    ]
+
+    for url in apis:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "CatecismoHeidelberg/1.0"})
+            with urllib.request.urlopen(req, timeout=10) as response:
+                data = json.loads(response.read().decode("utf-8"))
+                if "text" in data and data["text"]:
+                    return jsonify({"texto": data["text"].strip(), "referencia": data.get("reference", ref)})
+                elif "verses" in data and data["verses"]:
+                    texto = " ".join(v["text"] for v in data["verses"]).strip()
+                    return jsonify({"texto": texto, "referencia": data.get("reference", ref)})
+        except Exception:
+            continue
+
+    return jsonify({"error": f"No se pudo obtener el texto de {ref}"}), 404
 
 if __name__ == "__main__":
     # Crear la base de datos si no existe
