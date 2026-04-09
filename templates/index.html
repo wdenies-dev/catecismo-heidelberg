@@ -219,11 +219,9 @@
         }
 
         // ========== BUSCADOR ==========
-        let buscadorTimeout = null;
         const buscador = document.getElementById("buscador");
 
-        buscador.addEventListener("input", function() {
-            clearTimeout(buscadorTimeout);
+        buscador.addEventListener("input", async function() {
             const termino = this.value.trim();
 
             if (termino.length === 0) {
@@ -231,44 +229,23 @@
                 return;
             }
 
-            // Si es un número exacto entre 1-129, abrir esa pregunta directamente
-            const numero = parseInt(termino);
-            if (/^\d+$/.test(termino) && numero >= 1 && numero <= 129) {
-                buscadorTimeout = setTimeout(() => {
+            // Si es un número válido (1-129), abrir esa pregunta de inmediato
+            if (/^\d+$/.test(termino)) {
+                const numero = parseInt(termino);
+                if (numero >= 1 && numero <= 129) {
                     seleccionarPregunta(numero);
-                }, 500);
-                // También filtrar la lista
-                const filtradas = todasLasPreguntas.filter(p =>
-                    p.id.toString().startsWith(termino)
-                );
-                renderizarLista(filtradas);
-                return;
+                    return;
+                }
             }
 
-            if (termino.length < 2) {
-                renderizarLista(todasLasPreguntas);
-                return;
-            }
-
-            buscadorTimeout = setTimeout(async () => {
+            // Si es texto, buscar por palabra
+            if (termino.length >= 2) {
                 try {
                     const res = await fetch(`/api/buscar?q=${encodeURIComponent(termino)}`);
                     const resultados = await res.json();
                     renderizarLista(resultados);
                 } catch (error) {
                     console.error("Error buscando:", error);
-                }
-            }, 300);
-        });
-
-        // Al presionar Enter, abrir la pregunta si es número
-        buscador.addEventListener("keydown", function(e) {
-            if (e.key === "Enter") {
-                const termino = this.value.trim();
-                const numero = parseInt(termino);
-                if (/^\d+$/.test(termino) && numero >= 1 && numero <= 129) {
-                    seleccionarPregunta(numero);
-                    this.blur();
                 }
             }
         });
